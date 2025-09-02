@@ -1,0 +1,164 @@
+import { User } from './User';
+import { MedicalProvider } from './MedicalProvider';
+import { MedicalBill } from './MedicalBill';
+import { MedicalBillCharges } from './MedicalBillCharges';
+import { ExplanationOfBenefits } from './ExplanationOfBenefits';
+import { CollectionBill } from './CollectionBill';
+import { MedicalServiceEvent } from './MedicalServiceEvent';
+
+// Define associations between models
+const initializeAssociations = () => {
+  // User associations
+  User.hasMany(MedicalProvider, {
+    foreignKey: 'userId',
+    as: 'medicalProviders',
+    onDelete: 'CASCADE',
+  });
+
+  User.hasMany(MedicalBill, {
+    foreignKey: 'userId',
+    as: 'medicalBills',
+    onDelete: 'CASCADE',
+  });
+
+  User.hasMany(ExplanationOfBenefits, {
+    foreignKey: 'userId',
+    as: 'explanationOfBenefits',
+    onDelete: 'CASCADE',
+  });
+
+  User.hasMany(CollectionBill, {
+    foreignKey: 'userId',
+    as: 'collectionBills',
+    onDelete: 'CASCADE',
+  });
+
+  User.hasMany(MedicalServiceEvent, {
+    foreignKey: 'userId',
+    as: 'medicalServiceEvents',
+    onDelete: 'CASCADE',
+  });
+
+  // MedicalProvider associations
+  MedicalProvider.belongsTo(User, {
+    foreignKey: 'userId',
+    as: 'user',
+  });
+
+  MedicalProvider.hasMany(MedicalBill, {
+    foreignKey: 'medicalProviderId',
+    as: 'medicalBills',
+    onDelete: 'RESTRICT',
+  });
+
+  MedicalProvider.hasMany(ExplanationOfBenefits, {
+    foreignKey: 'medicalProviderId',
+    as: 'explanationOfBenefits',
+    onDelete: 'RESTRICT',
+  });
+
+  MedicalProvider.hasMany(CollectionBill, {
+    foreignKey: 'medicalProviderId',
+    as: 'collectionBills',
+    onDelete: 'RESTRICT',
+  });
+
+  MedicalProvider.hasMany(MedicalServiceEvent, {
+    foreignKey: 'medicalProviderId',
+    as: 'medicalServiceEvents',
+    onDelete: 'RESTRICT',
+  });
+
+  // MedicalBill associations
+  MedicalBill.belongsTo(User, {
+    foreignKey: 'userId',
+    as: 'user',
+  });
+
+  MedicalBill.belongsTo(MedicalProvider, {
+    foreignKey: 'medicalProviderId',
+    as: 'medicalProvider',
+  });
+
+  MedicalBill.hasOne(MedicalBillCharges, {
+    foreignKey: 'medicalBillId',
+    as: 'charges',
+    onDelete: 'CASCADE',
+  });
+
+  MedicalBill.hasMany(MedicalServiceEvent, {
+    foreignKey: 'medicalBillId',
+    as: 'serviceEvents',
+    onDelete: 'SET NULL',
+  });
+
+  // MedicalBillCharges associations
+  MedicalBillCharges.belongsTo(MedicalBill, {
+    foreignKey: 'medicalBillId',
+    as: 'medicalBill',
+  });
+
+  // ExplanationOfBenefits associations
+  ExplanationOfBenefits.belongsTo(User, {
+    foreignKey: 'userId',
+    as: 'user',
+  });
+
+  ExplanationOfBenefits.belongsTo(MedicalProvider, {
+    foreignKey: 'medicalProviderId',
+    as: 'medicalProvider',
+  });
+
+  ExplanationOfBenefits.hasMany(MedicalServiceEvent, {
+    foreignKey: 'explanationOfBenefitsId',
+    as: 'serviceEvents',
+    onDelete: 'SET NULL',
+  });
+
+  // CollectionBill associations
+  CollectionBill.belongsTo(User, {
+    foreignKey: 'userId',
+    as: 'user',
+  });
+
+  CollectionBill.belongsTo(MedicalProvider, {
+    foreignKey: 'medicalProviderId',
+    as: 'medicalProvider',
+  });
+
+  // MedicalServiceEvent associations
+  MedicalServiceEvent.belongsTo(User, {
+    foreignKey: 'userId',
+    as: 'user',
+  });
+
+  MedicalServiceEvent.belongsTo(MedicalProvider, {
+    foreignKey: 'medicalProviderId',
+    as: 'medicalProvider',
+  });
+
+  MedicalServiceEvent.belongsTo(MedicalBill, {
+    foreignKey: 'medicalBillId',
+    as: 'medicalBill',
+  });
+
+  MedicalServiceEvent.belongsTo(ExplanationOfBenefits, {
+    foreignKey: 'explanationOfBenefitsId',
+    as: 'explanationOfBenefits',
+  });
+};
+
+// Export all models and initialization function
+export {
+  User,
+  MedicalProvider,
+  MedicalBill,
+  MedicalBillCharges,
+  ExplanationOfBenefits,
+  CollectionBill,
+  MedicalServiceEvent,
+  initializeAssociations,
+};
+
+// Initialize associations when this module is imported
+initializeAssociations();

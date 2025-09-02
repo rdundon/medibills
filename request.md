@@ -1,0 +1,44 @@
+
+I'd like to stub a Node / Express API/UI monorepo project that can run locally, but support user authentication and network requests in case I waant a hosted solution later.
+
+The project must:
+ - Use TypeScript
+ - Use Express for the API (in `./api`)
+   - Use Sequelize for the database and data models, using sqllite locally as the default
+   - support .env file settings
+   - Use the following data models. Below is the description, but all data models should have a userid so users can only access their stuff:
+     - MedicalBills
+       - MedicalProvider (One to One)
+       - Date of Service
+       - MedicalBillCharges (One to One)
+       - MedicalServiceEvents (One to Many)
+       - Total
+     - ExplanationOfBenefits
+       - Date of Service
+       - MedicalProvider (One to One)
+       - Total Paid
+       - Total Billed
+       - Total Discount
+       - Total May Owe
+       - Insurer (String for now)
+       - MedicalServiceEvents (One to Many)
+     - Users
+       - Username
+       - Password
+       - Email
+     - MedicalProviders
+       - Name
+       - Address
+       - Phone
+       - Website
+       - PaymentWebsite
+     - CollectionBills
+       - Date of Notice
+       - MedicalProvider
+       - Date of Service
+       - Amount Total
+     - MedicalServiceEvents
+       - Date of Service
+       - Medical Provider (One to One)
+   - API should have unit tests, using Jest or something better
+  - UI (in `./ui`) will use Vue, and Playwright or Cypress for testing
