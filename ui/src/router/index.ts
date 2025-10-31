@@ -61,6 +61,78 @@ const router = createRouter({
       name: 'edit-provider',
       component: () => import('@/views/EditProviderView.vue'),
       meta: { requiresAuth: true }
+    },
+    {
+      path: '/medical-bill-charges',
+      name: 'medical-bill-charges',
+      component: () => import('@/views/MedicalBillChargesView.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/medical-bill-charges/create',
+      name: 'create-medical-bill-charge',
+      component: () => import('@/views/CreateMedicalBillChargeView.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/medical-bill-charges/:id/edit',
+      name: 'edit-medical-bill-charge',
+      component: () => import('@/views/EditMedicalBillChargeView.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/collection-bills',
+      name: 'collection-bills',
+      component: () => import('@/views/CollectionBillsView.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/collection-bills/create',
+      name: 'create-collection-bill',
+      component: () => import('@/views/CreateCollectionBillView.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/collection-bills/:id/edit',
+      name: 'edit-collection-bill',
+      component: () => import('@/views/EditCollectionBillView.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/medical-service-events',
+      name: 'medical-service-events',
+      component: () => import('@/views/MedicalServiceEventsView.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/medical-service-events/create',
+      name: 'create-medical-service-event',
+      component: () => import('@/views/CreateMedicalServiceEventView.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/medical-service-events/:id/edit',
+      name: 'edit-medical-service-event',
+      component: () => import('@/views/EditMedicalServiceEventView.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/explanation-of-benefits',
+      name: 'explanation-of-benefits',
+      component: () => import('@/views/ExplanationOfBenefitsView.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/explanation-of-benefits/create',
+      name: 'create-explanation-of-benefits',
+      component: () => import('@/views/CreateExplanationOfBenefitsView.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/explanation-of-benefits/:id/edit',
+      name: 'edit-explanation-of-benefits',
+      component: () => import('@/views/EditExplanationOfBenefitsView.vue'),
+      meta: { requiresAuth: true }
     }
   ]
 })
