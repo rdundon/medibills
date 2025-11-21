@@ -17,6 +17,9 @@ import medicalServiceEventsRoutes from './routes/medicalServiceEvents';
 // Load environment variables
 dotenv.config();
 
+// Import models to initialize associations
+import './models';
+
 // Create Express app
 const app = express();
 
