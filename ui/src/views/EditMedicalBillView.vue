@@ -64,6 +64,23 @@
             <p v-if="errors.total" class="form-error">{{ errors.total }}</p>
           </div>
 
+          <div>
+            <label for="serviceEventIds" class="form-label">Associated Service Events</label>
+            <select
+              id="serviceEventIds"
+              v-model="form.serviceEventIds"
+              class="form-input"
+              multiple
+              :class="{ 'border-red-500': errors.serviceEventIds }"
+            >
+              <option v-for="event in serviceEvents" :key="event.id" :value="event.id">
+                {{ formatDate(event.dateOfService) }} - {{ event.description || 'No description' }} (${{ event.amount || 0 }})
+              </option>
+            </select>
+            <p class="text-sm text-gray-600 mt-1">Hold Ctrl/Cmd to select multiple service events</p>
+            <p v-if="errors.serviceEventIds" class="form-error">{{ errors.serviceEventIds }}</p>
+          </div>
+
           <div class="flex justify-end space-x-4">
             <router-link to="/medical-bills" class="btn btn-secondary">
               Cancel
@@ -92,11 +109,20 @@ interface MedicalProvider {
   name: string
 }
 
+interface MedicalServiceEvent {
+  id: string
+  dateOfService: string
+  description?: string
+  amount?: number
+}
+
 const providers = ref<MedicalProvider[]>([])
+const serviceEvents = ref<MedicalServiceEvent[]>([])
 const form = reactive({
   medicalProviderId: '',
   dateOfService: '',
   total: 0,
+  serviceEventIds: [] as string[],
 })
 
 const errors = reactive<Record<string, string>>({})
@@ -113,6 +139,15 @@ const loadProviders = async () => {
   }
 }
 
+const loadServiceEvents = async () => {
+  try {
+    const response = await apiClient.get('/api/medical-service-events')
+    serviceEvents.value = response.data.data
+  } catch (err: any) {
+    console.error('Failed to load service events:', err.message)
+  }
+}
+
 const loadBill = async () => {
   loading.value = true
   error.value = ''
@@ -124,11 +159,16 @@ const loadBill = async () => {
     form.medicalProviderId = bill.medicalProviderId
     form.dateOfService = bill.dateOfService.split('T')[0] // Convert to YYYY-MM-DD format
     form.total = bill.total
+    form.serviceEventIds = bill.serviceEvents?.map((event: any) => event.id) || []
   } catch (err: any) {
     error.value = err.message || 'Failed to load medical bill'
   } finally {
     loading.value = false
   }
+}
+
+const formatDate = (dateString: string) => {
+  return new Date(dateString).toLocaleDateString()
 }
 
 const validateForm = () => {
@@ -164,13 +204,33 @@ const submitForm = async () => {
   saving.value = true
 
   try {
+    const billId = route.params.id as string
     const data = {
       medicalProviderId: form.medicalProviderId,
       dateOfService: form.dateOfService,
       total: form.total,
     }
 
-    await apiClient.put(`/api/medical-bills/${route.params.id}`, data)
+    await apiClient.put(`/api/medical-bills/${billId}`, data)
+
+    // Get current associations
+    const currentBill = await apiClient.get(`/api/medical-bills/${billId}`)
+    const currentServiceEventIds = currentBill.data.data.serviceEvents?.map((event: any) => event.id) || []
+
+    // Remove associations that are no longer selected
+    const toRemove = currentServiceEventIds.filter((id: string) => !form.serviceEventIds.includes(id))
+    for (const serviceEventId of toRemove) {
+      await apiClient.delete(`/api/medical-bills/${billId}/service-events/${serviceEventId}`)
+    }
+
+    // Add new associations
+    const toAdd = form.serviceEventIds.filter(id => !currentServiceEventIds.includes(id))
+    if (toAdd.length > 0) {
+      await apiClient.post(`/api/medical-bills/${billId}/service-events`, {
+        serviceEventIds: toAdd,
+      })
+    }
+
     router.push('/medical-bills')
   } catch (err: any) {
     if (err.response?.data?.details) {
@@ -188,6 +248,7 @@ const submitForm = async () => {
 
 onMounted(() => {
   loadProviders()
+  loadServiceEvents()
   loadBill()
 })
 </script>

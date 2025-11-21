@@ -132,12 +132,20 @@ export interface CollectionBillCreationAttributes {
   amountTotal: number;
 }
 
+// Medical Bill Service Event junction types
+export interface MedicalBillServiceEventAttributes {
+  id: string;
+  medicalBillId: string;
+  medicalServiceEventId: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
 // Medical Service Event types
 export interface MedicalServiceEventAttributes {
   id: string;
   userId: string;
   medicalProviderId: string;
-  medicalBillId?: string;
   explanationOfBenefitsId?: string;
   dateOfService: Date;
   description?: string;
@@ -148,7 +156,6 @@ export interface MedicalServiceEventAttributes {
 
 export interface MedicalServiceEventCreationAttributes {
   medicalProviderId: string;
-  medicalBillId?: string;
   explanationOfBenefitsId?: string;
   dateOfService: Date;
   description?: string;

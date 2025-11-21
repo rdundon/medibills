@@ -5,6 +5,7 @@ import { MedicalBillCharges } from './MedicalBillCharges';
 import { ExplanationOfBenefits } from './ExplanationOfBenefits';
 import { CollectionBill } from './CollectionBill';
 import { MedicalServiceEvent } from './MedicalServiceEvent';
+import { MedicalBillServiceEvent } from './MedicalBillServiceEvent';
 
 // Define associations between models
 const initializeAssociations = () => {
@@ -86,10 +87,12 @@ const initializeAssociations = () => {
     onDelete: 'CASCADE',
   });
 
-  MedicalBill.hasMany(MedicalServiceEvent, {
+  MedicalBill.belongsToMany(MedicalServiceEvent, {
+    through: MedicalBillServiceEvent,
     foreignKey: 'medicalBillId',
+    otherKey: 'medicalServiceEventId',
     as: 'serviceEvents',
-    onDelete: 'SET NULL',
+    onDelete: 'CASCADE',
   });
 
   // MedicalBillCharges associations
@@ -137,9 +140,12 @@ const initializeAssociations = () => {
     as: 'medicalProvider',
   });
 
-  MedicalServiceEvent.belongsTo(MedicalBill, {
-    foreignKey: 'medicalBillId',
-    as: 'medicalBill',
+  MedicalServiceEvent.belongsToMany(MedicalBill, {
+    through: MedicalBillServiceEvent,
+    foreignKey: 'medicalServiceEventId',
+    otherKey: 'medicalBillId',
+    as: 'medicalBills',
+    onDelete: 'CASCADE',
   });
 
   MedicalServiceEvent.belongsTo(ExplanationOfBenefits, {
@@ -157,6 +163,7 @@ export {
   ExplanationOfBenefits,
   CollectionBill,
   MedicalServiceEvent,
+  MedicalBillServiceEvent,
   initializeAssociations,
 };
 
