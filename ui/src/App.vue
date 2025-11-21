@@ -9,6 +9,10 @@
           <router-link to="/dashboard">Dashboard</router-link>
           <router-link to="/medical-bills">Medical Bills</router-link>
           <router-link to="/providers">Providers</router-link>
+          <router-link to="/medical-bill-charges">Medical Bill Charges</router-link>
+          <router-link to="/collection-bills">Collection Bills</router-link>
+          <router-link to="/medical-service-events">Medical Service Events</router-link>
+          <router-link to="/explanation-of-benefits">Explanation of Benefits</router-link>
           <button @click="logout" class="logout-btn">Logout</button>
         </div>
       </nav>
