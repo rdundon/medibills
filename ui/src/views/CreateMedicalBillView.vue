@@ -52,6 +52,23 @@
             <p v-if="errors.total" class="form-error">{{ errors.total }}</p>
           </div>
 
+          <div>
+            <label for="serviceEventIds" class="form-label">Associated Service Events</label>
+            <select
+              id="serviceEventIds"
+              v-model="form.serviceEventIds"
+              class="form-input"
+              multiple
+              :class="{ 'border-red-500': errors.serviceEventIds }"
+            >
+              <option v-for="event in serviceEvents" :key="event.id" :value="event.id">
+                {{ formatDate(event.dateOfService) }} - {{ event.description || 'No description' }} (${{ event.amount || 0 }})
+              </option>
+            </select>
+            <p class="text-sm text-gray-600 mt-1">Hold Ctrl/Cmd to select multiple service events</p>
+            <p v-if="errors.serviceEventIds" class="form-error">{{ errors.serviceEventIds }}</p>
+          </div>
+
           <div class="flex justify-end space-x-4">
             <router-link to="/medical-bills" class="btn btn-secondary">
               Cancel
@@ -79,11 +96,20 @@ interface MedicalProvider {
   name: string
 }
 
+interface MedicalServiceEvent {
+  id: string
+  dateOfService: string
+  description?: string
+  amount?: number
+}
+
 const providers = ref<MedicalProvider[]>([])
+const serviceEvents = ref<MedicalServiceEvent[]>([])
 const form = reactive({
   medicalProviderId: '',
   dateOfService: '',
   total: 0,
+  serviceEventIds: [] as string[],
 })
 
 const errors = reactive<Record<string, string>>({})
@@ -96,6 +122,19 @@ const loadProviders = async () => {
   } catch (err: any) {
     console.error('Failed to load providers:', err.message)
   }
+}
+
+const loadServiceEvents = async () => {
+  try {
+    const response = await apiClient.get('/api/medical-service-events')
+    serviceEvents.value = response.data.data
+  } catch (err: any) {
+    console.error('Failed to load service events:', err.message)
+  }
+}
+
+const formatDate = (dateString: string) => {
+  return new Date(dateString).toLocaleDateString()
 }
 
 const validateForm = () => {
@@ -137,7 +176,16 @@ const submitForm = async () => {
       total: form.total,
     }
 
-    await apiClient.post('/api/medical-bills', data)
+    const response = await apiClient.post('/api/medical-bills', data)
+    const billId = response.data.data.id
+
+    // Add service event associations if any
+    if (form.serviceEventIds.length > 0) {
+      await apiClient.post(`/api/medical-bills/${billId}/service-events`, {
+        serviceEventIds: form.serviceEventIds,
+      })
+    }
+
     router.push('/medical-bills')
   } catch (err: any) {
     if (err.response?.data?.details) {
@@ -155,5 +203,6 @@ const submitForm = async () => {
 
 onMounted(() => {
   loadProviders()
+  loadServiceEvents()
 })
 </script>

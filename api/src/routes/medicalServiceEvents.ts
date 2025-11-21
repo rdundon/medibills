@@ -16,7 +16,7 @@ router.get('/', requireAuth, async (req: Request, res: Response): Promise<void> 
   try {
     const events = await MedicalServiceEvent.findAll({
       where: { userId: (req as AuthenticatedRequest).userId },
-      include: ['medicalProvider', 'medicalBill', 'explanationOfBenefits'],
+      include: ['medicalProvider', 'medicalBills', 'explanationOfBenefits'],
       order: [['createdAt', 'DESC']],
     });
 
@@ -59,7 +59,7 @@ router.get('/:id',
       const { id } = req.params;
       const event = await MedicalServiceEvent.findOne({
         where: { id, userId: (req as AuthenticatedRequest).userId },
-        include: ['medicalProvider', 'medicalBill', 'explanationOfBenefits'],
+        include: ['medicalProvider', 'medicalBills', 'explanationOfBenefits'],
       });
 
       if (!event) {
@@ -93,10 +93,6 @@ router.post('/',
     body('medicalProviderId')
       .isUUID()
       .withMessage('Medical provider ID must be a valid UUID'),
-    body('medicalBillId')
-      .optional()
-      .isUUID()
-      .withMessage('Medical bill ID must be a valid UUID'),
     body('explanationOfBenefitsId')
       .optional()
       .isUUID()
@@ -126,21 +122,7 @@ router.post('/',
         return;
       }
 
-      const { medicalProviderId, medicalBillId, explanationOfBenefitsId, dateOfService, description, amount } = req.body;
-
-      // Verify ownership of related entities if provided
-      if (medicalBillId) {
-        const bill = await MedicalBill.findOne({
-          where: { id: medicalBillId, userId: (req as AuthenticatedRequest).userId },
-        });
-        if (!bill) {
-          res.status(404).json({
-            success: false,
-            error: 'Medical bill not found or access denied',
-          } as ApiResponse);
-          return;
-        }
-      }
+      const { medicalProviderId, explanationOfBenefitsId, dateOfService, description, amount } = req.body;
 
       if (explanationOfBenefitsId) {
         const eob = await ExplanationOfBenefits.findOne({
@@ -158,7 +140,6 @@ router.post('/',
       const event = await MedicalServiceEvent.create({
         userId: (req as AuthenticatedRequest).userId,
         medicalProviderId,
-        medicalBillId,
         explanationOfBenefitsId,
         dateOfService,
         description,
@@ -167,7 +148,7 @@ router.post('/',
 
       const eventWithRelations = await MedicalServiceEvent.findOne({
         where: { id: event.id },
-        include: ['medicalProvider', 'medicalBill', 'explanationOfBenefits'],
+        include: ['medicalProvider', 'medicalBills', 'explanationOfBenefits'],
       });
 
       res.status(201).json({
@@ -198,10 +179,6 @@ router.put('/:id',
       .optional()
       .isUUID()
       .withMessage('Medical provider ID must be a valid UUID'),
-    body('medicalBillId')
-      .optional()
-      .isUUID()
-      .withMessage('Medical bill ID must be a valid UUID'),
     body('explanationOfBenefitsId')
       .optional()
       .isUUID()
@@ -233,21 +210,7 @@ router.put('/:id',
       }
 
       const { id } = req.params;
-      const { medicalProviderId, medicalBillId, explanationOfBenefitsId, dateOfService, description, amount } = req.body;
-
-      // Verify ownership of related entities if provided
-      if (medicalBillId) {
-        const bill = await MedicalBill.findOne({
-          where: { id: medicalBillId, userId: (req as AuthenticatedRequest).userId },
-        });
-        if (!bill) {
-          res.status(404).json({
-            success: false,
-            error: 'Medical bill not found or access denied',
-          } as ApiResponse);
-          return;
-        }
-      }
+      const { medicalProviderId, explanationOfBenefitsId, dateOfService, description, amount } = req.body;
 
       if (explanationOfBenefitsId) {
         const eob = await ExplanationOfBenefits.findOne({
@@ -263,7 +226,7 @@ router.put('/:id',
       }
 
       const [updatedRowsCount] = await MedicalServiceEvent.update(
-        { medicalProviderId, medicalBillId, explanationOfBenefitsId, dateOfService, description, amount },
+        { medicalProviderId, explanationOfBenefitsId, dateOfService, description, amount },
         { where: { id, userId: (req as AuthenticatedRequest).userId } }
       );
 
@@ -277,7 +240,7 @@ router.put('/:id',
 
       const updatedEvent = await MedicalServiceEvent.findOne({
         where: { id, userId: (req as AuthenticatedRequest).userId },
-        include: ['medicalProvider', 'medicalBill', 'explanationOfBenefits'],
+        include: ['medicalProvider', 'medicalBills', 'explanationOfBenefits'],
       });
 
       res.json({

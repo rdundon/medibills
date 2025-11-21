@@ -8,7 +8,6 @@ class MedicalServiceEvent extends Model<MedicalServiceEventAttributes, MedicalSe
   public id!: string;
   public userId!: string;
   public medicalProviderId!: string;
-  public medicalBillId!: string;
   public explanationOfBenefitsId!: string;
   public dateOfService!: Date;
   public description!: string;
@@ -40,15 +39,6 @@ MedicalServiceEvent.init({
       key: 'id',
     },
     onDelete: 'RESTRICT',
-  },
-  medicalBillId: {
-    type: DataTypes.UUID,
-    allowNull: true,
-    references: {
-      model: 'medical_bills',
-      key: 'id',
-    },
-    onDelete: 'SET NULL',
   },
   explanationOfBenefitsId: {
     type: DataTypes.UUID,
@@ -93,9 +83,6 @@ MedicalServiceEvent.init({
     },
     {
       fields: ['medicalProviderId'],
-    },
-    {
-      fields: ['medicalBillId'],
     },
     {
       fields: ['explanationOfBenefitsId'],

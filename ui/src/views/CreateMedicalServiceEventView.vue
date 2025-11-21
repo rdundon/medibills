@@ -25,19 +25,20 @@
           </div>
 
           <div>
-            <label for="medicalBillId" class="form-label">Medical Bill (Optional)</label>
+            <label for="medicalBillIds" class="form-label">Medical Bills (Optional)</label>
             <select
-              id="medicalBillId"
-              v-model="form.medicalBillId"
+              id="medicalBillIds"
+              v-model="form.medicalBillIds"
               class="form-input"
-              :class="{ 'border-red-500': errors.medicalBillId }"
+              multiple
+              :class="{ 'border-red-500': errors.medicalBillIds }"
             >
-              <option value="">Select a medical bill</option>
               <option v-for="bill in medicalBills" :key="bill.id" :value="bill.id">
                 {{ formatDate(bill.dateOfService) }} - ${{ bill.total.toFixed(2) }}
               </option>
             </select>
-            <p v-if="errors.medicalBillId" class="form-error">{{ errors.medicalBillId }}</p>
+            <p class="text-sm text-gray-600 mt-1">Hold Ctrl/Cmd to select multiple medical bills</p>
+            <p v-if="errors.medicalBillIds" class="form-error">{{ errors.medicalBillIds }}</p>
           </div>
 
           <div>
@@ -140,7 +141,7 @@ const explanationOfBenefits = ref<ExplanationOfBenefits[]>([])
 
 const form = reactive({
   medicalProviderId: '',
-  medicalBillId: '',
+  medicalBillIds: [] as string[],
   explanationOfBenefitsId: '',
   dateOfService: '',
   description: '',
@@ -179,7 +180,7 @@ const loadExplanationOfBenefits = async () => {
 
 const validateForm = () => {
   errors.medicalProviderId = ''
-  errors.medicalBillId = ''
+  errors.medicalBillIds = ''
   errors.explanationOfBenefitsId = ''
   errors.dateOfService = ''
   errors.description = ''
@@ -215,14 +216,24 @@ const submitForm = async () => {
   try {
     const data = {
       medicalProviderId: form.medicalProviderId,
-      medicalBillId: form.medicalBillId || undefined,
       explanationOfBenefitsId: form.explanationOfBenefitsId || undefined,
       dateOfService: form.dateOfService,
       description: form.description.trim() || undefined,
       amount: form.amount,
     }
 
-    await apiClient.post('/api/medical-service-events', data)
+    const response = await apiClient.post('/api/medical-service-events', data)
+    const eventId = response.data.data.id
+
+    // Add medical bill associations if any
+    if (form.medicalBillIds.length > 0) {
+      for (const billId of form.medicalBillIds) {
+        await apiClient.post(`/api/medical-bills/${billId}/service-events`, {
+          serviceEventIds: [eventId],
+        })
+      }
+    }
+
     router.push('/medical-service-events')
   } catch (err: any) {
     if (err.response?.data?.details) {
