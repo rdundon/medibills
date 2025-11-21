@@ -16,6 +16,7 @@ router.get('/', requireAuth, async (req: Request, res: Response): Promise<void> 
     const charges = await MedicalBillCharges.findAll({
       include: [{
         model: MedicalBill,
+        as: 'medicalBill',
         where: { userId: (req as AuthenticatedRequest).userId },
         include: ['medicalProvider'],
       }],
@@ -63,6 +64,7 @@ router.get('/:id',
         where: { id },
         include: [{
           model: MedicalBill,
+          as: 'medicalBill',
           where: { userId: (req as AuthenticatedRequest).userId },
           include: ['medicalProvider'],
         }],
@@ -145,6 +147,7 @@ router.post('/',
         where: { id: charge.id },
         include: [{
           model: MedicalBill,
+          as: 'medicalBill',
           include: ['medicalProvider'],
         }],
       });
@@ -203,6 +206,7 @@ router.put('/:id',
         where: { id },
         include: [{
           model: MedicalBill,
+          as: 'medicalBill',
           where: { userId: (req as AuthenticatedRequest).userId },
         }],
       });
@@ -232,6 +236,7 @@ router.put('/:id',
         where: { id },
         include: [{
           model: MedicalBill,
+          as: 'medicalBill',
           include: ['medicalProvider'],
         }],
       });
@@ -281,6 +286,7 @@ router.delete('/:id',
         where: { id },
         include: [{
           model: MedicalBill,
+          as: 'medicalBill',
           where: { userId: (req as AuthenticatedRequest).userId },
         }],
       });
