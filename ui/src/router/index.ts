@@ -133,6 +133,24 @@ const router = createRouter({
       name: 'edit-explanation-of-benefits',
       component: () => import('@/views/EditExplanationOfBenefitsView.vue'),
       meta: { requiresAuth: true }
+    },
+    {
+      path: '/medical-bill-payments',
+      name: 'medical-bill-payments',
+      component: () => import('@/views/MedicalBillPaymentsView.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/medical-bill-payments/create',
+      name: 'create-medical-bill-payment',
+      component: () => import('@/views/CreateMedicalBillPaymentView.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/medical-bill-payments/:id/edit',
+      name: 'edit-medical-bill-payment',
+      component: () => import('@/views/EditMedicalBillPaymentView.vue'),
+      meta: { requiresAuth: true }
     }
   ]
 })

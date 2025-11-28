@@ -13,6 +13,7 @@ import medicalBillChargesRoutes from './routes/medicalBillCharges';
 import explanationOfBenefitsRoutes from './routes/explanationOfBenefits';
 import collectionBillsRoutes from './routes/collectionBills';
 import medicalServiceEventsRoutes from './routes/medicalServiceEvents';
+import medicalBillPaymentsRoutes from './routes/medicalBillPayments';
 
 // Load environment variables
 dotenv.config();
@@ -99,6 +100,7 @@ app.use('/api/medical-bill-charges', medicalBillChargesRoutes);
 app.use('/api/explanation-of-benefits', explanationOfBenefitsRoutes);
 app.use('/api/collection-bills', collectionBillsRoutes);
 app.use('/api/medical-service-events', medicalServiceEventsRoutes);
+app.use('/api/medical-bill-payments', medicalBillPaymentsRoutes);
 
 // 404 handler
 app.use('*', (req, res) => {

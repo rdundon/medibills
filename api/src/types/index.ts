@@ -162,6 +162,22 @@ export interface MedicalServiceEventCreationAttributes {
   amount?: number;
 }
 
+// Medical Bill Payments types
+export interface MedicalBillPaymentsAttributes {
+  id: string;
+  userId: string;
+  amount: number;
+  date: Date;
+  notes?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+export interface MedicalBillPaymentsCreationAttributes {
+  amount: number;
+  date: Date;
+}
+
 // API Response types
 export interface ApiResponse<T = any> {
   success: boolean;

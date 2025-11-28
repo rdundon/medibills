@@ -11,13 +11,16 @@
           <h2 class="card-title">Quick Actions</h2>
         </div>
         <div class="dashboard-actions">
-          <router-link to="/medical-bills" class="btn btn-primary">
-            View Medical Bills
-          </router-link>
-          <router-link to="/providers" class="btn btn-success">
-            Manage Providers
-          </router-link>
-        </div>
+           <router-link to="/medical-bills" class="btn btn-primary">
+             View Medical Bills
+           </router-link>
+           <router-link to="/medical-bill-payments" class="btn btn-info">
+             View Payments
+           </router-link>
+           <router-link to="/providers" class="btn btn-success">
+             Manage Providers
+           </router-link>
+         </div>
       </div>
       
       <div class="card">
