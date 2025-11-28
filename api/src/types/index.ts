@@ -176,6 +176,7 @@ export interface MedicalBillPaymentsAttributes {
 export interface MedicalBillPaymentsCreationAttributes {
   amount: number;
   date: Date;
+  notes?: string;
 }
 
 // API Response types

@@ -36,6 +36,18 @@
           </div>
 
           <div>
+            <label for="notes" class="form-label">Notes</label>
+            <textarea
+              id="notes"
+              v-model="form.notes"
+              class="form-input"
+              rows="3"
+              :class="{ 'border-red-500': errors.notes }"
+            ></textarea>
+            <p v-if="errors.notes" class="form-error">{{ errors.notes }}</p>
+          </div>
+
+          <div>
             <label for="medicalBillIds" class="form-label">Associated Medical Bills</label>
             <select
               id="medicalBillIds"
@@ -91,6 +103,7 @@ const medicalBills = ref<MedicalBill[]>([])
 const form = reactive({
   amount: 0,
   date: '',
+  notes: '',
   medicalBillIds: [] as string[],
 })
 
@@ -140,6 +153,7 @@ const submitForm = async () => {
     const data = {
       amount: form.amount,
       date: form.date,
+      notes: form.notes,
     }
 
     const response = await medicalBillPaymentsService.create(data)

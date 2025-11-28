@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { body, param, validationResult } from 'express-validator';
-import { MedicalBillPayments, MedicalBill, MedicalBillPaymentAssociation } from '../models';
+import { MedicalBillPayments, MedicalBill, MedicalBillPaymentAssociation, MedicalProvider } from '../models';
 import { requireAuth } from '../middleware/auth';
 import { AuthenticatedRequest, ApiResponse } from '../types';
 
@@ -17,7 +17,10 @@ router.get('/', requireAuth, async (req: Request, res: Response): Promise<void> 
       include: [{
         model: MedicalBill,
         as: 'medicalBills',
-        include: ['medicalProvider'],
+        include: [{
+          model: MedicalProvider,
+          as: 'medicalProvider',
+        }],
       }],
       order: [['createdAt', 'DESC']],
     });
@@ -27,6 +30,7 @@ router.get('/', requireAuth, async (req: Request, res: Response): Promise<void> 
       data: payments,
     } as ApiResponse);
   } catch (error) {
+    console.error('Error fetching medical bill payments:', error);
     res.status(500).json({
       success: false,
       error: 'Failed to fetch medical bill payments',
@@ -64,7 +68,10 @@ router.get('/:id',
         include: [{
           model: MedicalBill,
           as: 'medicalBills',
-          include: ['medicalProvider'],
+          include: [{
+            model: MedicalProvider,
+            as: 'medicalProvider',
+          }],
         }],
       });
 
@@ -102,6 +109,10 @@ router.post('/',
     body('date')
       .isISO8601()
       .withMessage('Date must be a valid date'),
+    body('notes')
+      .optional()
+      .isString()
+      .withMessage('Notes must be a string'),
   ],
   async (req: Request, res: Response): Promise<void> => {
     try {
@@ -116,11 +127,12 @@ router.post('/',
         return;
       }
 
-      const { amount, date } = req.body;
+      const { amount, date, notes } = req.body;
       const payment = await MedicalBillPayments.create({
         userId: (req as AuthenticatedRequest).userId,
         amount,
         date,
+        notes,
       });
 
       const paymentWithBills = await MedicalBillPayments.findOne({
@@ -128,7 +140,10 @@ router.post('/',
         include: [{
           model: MedicalBill,
           as: 'medicalBills',
-          include: ['medicalProvider'],
+          include: [{
+            model: MedicalProvider,
+            as: 'medicalProvider',
+          }],
         }],
       });
 
@@ -164,6 +179,10 @@ router.put('/:id',
       .optional()
       .isISO8601()
       .withMessage('Date must be a valid date'),
+    body('notes')
+      .optional()
+      .isString()
+      .withMessage('Notes must be a string'),
   ],
   async (req: Request, res: Response): Promise<void> => {
     try {
@@ -179,10 +198,10 @@ router.put('/:id',
       }
 
       const { id } = req.params;
-      const { amount, date } = req.body;
+      const { amount, date, notes } = req.body;
 
       const [updatedRowsCount] = await MedicalBillPayments.update(
-        { amount, date },
+        { amount, date, notes },
         { where: { id, userId: (req as AuthenticatedRequest).userId } }
       );
 
@@ -199,7 +218,10 @@ router.put('/:id',
         include: [{
           model: MedicalBill,
           as: 'medicalBills',
-          include: ['medicalProvider'],
+          include: [{
+            model: MedicalProvider,
+            as: 'medicalProvider',
+          }],
         }],
       });
 
@@ -345,7 +367,10 @@ router.post('/:id/medical-bills',
         include: [{
           model: MedicalBill,
           as: 'medicalBills',
-          include: ['medicalProvider'],
+          include: [{
+            model: MedicalProvider,
+            as: 'medicalProvider',
+          }],
         }],
       });
 

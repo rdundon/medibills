@@ -5,6 +5,7 @@ export interface MedicalBillPayment {
   userId: string
   amount: number
   date: string
+  notes?: string
   createdAt: string
   updatedAt: string
   medicalBills?: MedicalBill[]
@@ -31,12 +32,12 @@ export const medicalBillPaymentsService = {
     return response.data.data
   },
 
-  async create(data: { amount: number; date: string }) {
+  async create(data: { amount: number; date: string; notes?: string }) {
     const response = await apiClient.post('/api/medical-bill-payments', data)
     return response.data.data
   },
 
-  async update(id: string, data: { amount?: number; date?: string }) {
+  async update(id: string, data: { amount?: number; date?: string; notes?: string }) {
     const response = await apiClient.put(`/api/medical-bill-payments/${id}`, data)
     return response.data.data
   },

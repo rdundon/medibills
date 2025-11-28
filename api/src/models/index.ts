@@ -168,14 +168,14 @@ const initializeAssociations = () => {
   });
 
   MedicalBill.belongsToMany(MedicalBillPayments, {
-    through: MedicalBillPaymentAssociation,
+    through: 'medical_bill_payment_associations',
     foreignKey: 'medicalBillId',
     otherKey: 'medicalBillPaymentId',
     as: 'payments',
   });
 
   MedicalBillPayments.belongsToMany(MedicalBill, {
-    through: MedicalBillPaymentAssociation,
+    through: 'medical_bill_payment_associations',
     foreignKey: 'medicalBillPaymentId',
     otherKey: 'medicalBillId',
     as: 'medicalBills',

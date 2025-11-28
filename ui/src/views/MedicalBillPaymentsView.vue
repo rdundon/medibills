@@ -37,6 +37,7 @@
                 <tr>
                   <th>Date</th>
                   <th>Amount</th>
+                  <th>Notes</th>
                   <th>Associated Bills</th>
                   <th>Actions</th>
                 </tr>
@@ -45,6 +46,7 @@
                 <tr v-for="payment in payments" :key="payment.id">
                   <td>{{ formatDate(payment.date) }}</td>
                   <td class="font-medium">${{ payment.amount.toFixed(2) }}</td>
+                  <td class="text-sm">{{ payment.notes || '-' }}</td>
                   <td>
                     <div v-if="payment.medicalBills && payment.medicalBills.length > 0">
                       <div v-for="bill in payment.medicalBills" :key="bill.id" class="text-sm">

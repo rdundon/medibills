@@ -48,6 +48,18 @@
           </div>
 
           <div>
+            <label for="notes" class="form-label">Notes</label>
+            <textarea
+              id="notes"
+              v-model="form.notes"
+              class="form-input"
+              rows="3"
+              :class="{ 'border-red-500': errors.notes }"
+            ></textarea>
+            <p v-if="errors.notes" class="form-error">{{ errors.notes }}</p>
+          </div>
+
+          <div>
             <label for="medicalBillIds" class="form-label">Associated Medical Bills</label>
             <select
               id="medicalBillIds"
@@ -104,6 +116,7 @@ const medicalBills = ref<MedicalBill[]>([])
 const form = reactive({
   amount: 0,
   date: '',
+  notes: '',
   medicalBillIds: [] as string[],
 })
 
@@ -130,6 +143,7 @@ const loadPayment = async () => {
 
     form.amount = payment.amount
     form.date = payment.date.split('T')[0] // Convert to YYYY-MM-DD format
+    form.notes = payment.notes || ''
     form.medicalBillIds = payment.medicalBills?.map((bill: any) => bill.id) || []
   } catch (err: any) {
     error.value = err.message || 'Failed to load medical bill payment'
@@ -173,6 +187,7 @@ const submitForm = async () => {
     const data = {
       amount: form.amount,
       date: form.date,
+      notes: form.notes,
     }
 
     await medicalBillPaymentsService.update(paymentId, data)
